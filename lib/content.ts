@@ -1,5 +1,10 @@
 // All site copy lives here so it can be edited without touching components.
 
+// Pages serves the site under a sub-path; next/image does not add it to
+// unoptimized local images, so local image paths go through this helper.
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const img = (path: string) => `${basePath}${path}`;
+
 export const site = {
   name: "Zephaniah Raika",
   firstName: "Zephaniah",
@@ -8,8 +13,8 @@ export const site = {
   email: "raikazephaniah44@gmail.com",
   location: "India",
   // Replace these files with your own photos.
-  heroImage: "/images/hero.jpg", // full-screen first page background, landscape
-  photo: "/images/profile.jpg", // portrait (~3:4) used in About
+  heroImage: img("/images/hero.jpg"), // full-screen first page background, landscape
+  photo: img("/images/profile.jpg"), // portrait (~3:4) used in About
 };
 
 export type Accent = "lime" | "orange" | "pink" | "blue";
@@ -72,12 +77,12 @@ export type Work = {
 };
 
 export const work: Work[] = [
-  { title: "Golden Hour", category: "Photography", year: "2026", image: "/images/work/04.jpg" },
-  { title: "City Lines", category: "Photography", year: "2026", image: "/images/work/05.jpg" },
-  { title: "Still Water", category: "Videography", year: "2025", image: "/images/work/06.jpg" },
-  { title: "Analog Days", category: "Design", year: "2025", image: "/images/work/08.jpg" },
-  { title: "Quiet Roads", category: "Photography", year: "2025", image: "/images/work/09.jpg" },
-  { title: "Night Shift", category: "Videography", year: "2024", image: "/images/work/10.jpg" },
+  { title: "Golden Hour", category: "Photography", year: "2026", image: img("/images/work/04.jpg") },
+  { title: "City Lines", category: "Photography", year: "2026", image: img("/images/work/05.jpg") },
+  { title: "Still Water", category: "Videography", year: "2025", image: img("/images/work/06.jpg") },
+  { title: "Analog Days", category: "Design", year: "2025", image: img("/images/work/08.jpg") },
+  { title: "Quiet Roads", category: "Photography", year: "2025", image: img("/images/work/09.jpg") },
+  { title: "Night Shift", category: "Videography", year: "2024", image: img("/images/work/10.jpg") },
 ];
 
 export const stats = [
@@ -107,7 +112,7 @@ export const journal: JournalEntry[] = [
     title: "Money as a creative",
     excerpt:
       "How I budget gear, price shoots and manage irregular income as a freelancer.",
-    image: "/images/work/11.jpg",
+    image: img("/images/work/11.jpg"),
     accent: "lime",
   },
   {
@@ -116,7 +121,7 @@ export const journal: JournalEntry[] = [
     title: "Notes from the field",
     excerpt:
       "Stories behind the shots, editing breakdowns and lessons from every project.",
-    image: "/images/work/12.jpg",
+    image: img("/images/work/12.jpg"),
     accent: "orange",
     href: "/blog",
     cta: "Read the blog",
@@ -127,7 +132,7 @@ export const journal: JournalEntry[] = [
     title: "Discipline in & out",
     excerpt:
       "Training logs, routines and how staying fit keeps me sharp behind the camera.",
-    image: "/images/work/07.jpg",
+    image: img("/images/work/07.jpg"),
     accent: "blue",
     href: "/fitness",
     cta: "See the training",

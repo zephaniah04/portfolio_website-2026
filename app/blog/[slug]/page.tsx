@@ -8,7 +8,16 @@ import { ContactFooter } from "@/components/contact-footer";
 import { NotionContent } from "@/components/notion-content";
 import { MaskText, Reveal } from "@/components/reveal";
 import { accentClass, accentForTopic, site } from "@/lib/content";
-import { formatPostDate, getBlogPost, getPostContent } from "@/lib/notion";
+import { formatPostDate, getBlogPost, getBlogPosts, getPostContent } from "@/lib/notion";
+
+// Needed for the static export (GitHub Pages); harmless elsewhere. With Notion
+// unset there are no posts, so a placeholder keeps the build valid (it 404s).
+export async function generateStaticParams() {
+  const posts = await getBlogPosts();
+  return posts.length > 0
+    ? posts.map((post) => ({ slug: post.slug }))
+    : [{ slug: "no-posts-yet" }];
+}
 
 export async function generateMetadata({
   params,
