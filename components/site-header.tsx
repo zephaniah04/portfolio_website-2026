@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useLenis } from "lenis/react";
 import { INTRO_DELAY } from "@/components/preloader";
@@ -8,14 +9,28 @@ import { menuLinks, site, socials } from "@/lib/content";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 
+const MotionLink = motion.create(Link);
+
 const navLinks = [
   { label: "Work", href: "#work" },
   { label: "About", href: "#about" },
-  { label: "Journal", href: "#journal" },
+  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "#contact" },
 ];
 
-export function SiteHeader() {
+type SiteHeaderProps = {
+  // Section links scroll in place on the home page and navigate to it from
+  // anywhere else.
+  onHome?: boolean;
+  // The home page waits for the preloader; other pages bring the header in
+  // right away.
+  delay?: number;
+};
+
+export function SiteHeader({
+  onHome = true,
+  delay = onHome ? INTRO_DELAY + 0.4 : 0.1,
+}: SiteHeaderProps) {
   const [open, setOpen] = useState(false);
   const lenis = useLenis();
 
@@ -37,31 +52,36 @@ export function SiteHeader() {
     setTimeout(() => lenis?.scrollTo(href, { duration: 1.4 }), 350);
   };
 
+  const isSection = (href: string) => href.startsWith("#");
+  const hrefFor = (href: string) => (isSection(href) && !onHome ? `/${href}` : href);
+
   return (
     <>
       <motion.header
         className="fixed inset-x-0 top-0 z-80 flex items-center justify-between px-4 py-4 mix-blend-difference md:px-8 md:py-6"
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: INTRO_DELAY + 0.4, duration: 0.8, ease }}
+        transition={{ delay, duration: 0.8, ease }}
       >
-        <a
-          href="#top"
+        <Link
+          href={hrefFor("#top")}
           onClick={(e) => {
+            if (!onHome) return;
             e.preventDefault();
             goTo("#top");
           }}
           className="font-heading text-lg font-semibold tracking-tighter text-paper uppercase md:text-xl"
         >
           ZR
-        </a>
+        </Link>
 
         <nav aria-label="Primary" className="ml-auto hidden w-1/2 justify-between pr-12 md:flex">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
-              href={link.href}
+              href={hrefFor(link.href)}
               onClick={(e) => {
+                if (!isSection(link.href) || !onHome) return;
                 e.preventDefault();
                 goTo(link.href);
               }}
@@ -69,7 +89,7 @@ export function SiteHeader() {
             >
               {link.label}
               <span className="absolute -bottom-1 left-0 h-px w-full origin-right scale-x-0 bg-paper transition-transform duration-500 group-hover:origin-left group-hover:scale-x-100" />
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -116,9 +136,13 @@ export function SiteHeader() {
               <ul className="flex flex-col">
                 {menuLinks.map((link, i) => (
                   <li key={link.href} className="overflow-hidden border-b border-ink/15">
-                    <motion.a
-                      href={link.href}
-                      onClick={(e) => {
+                    <MotionLink
+                      href={hrefFor(link.href)}
+                      onClick={(e: React.MouseEvent) => {
+                        if (!isSection(link.href) || !onHome) {
+                          setOpen(false);
+                          return;
+                        }
                         e.preventDefault();
                         goTo(link.href);
                       }}
@@ -134,7 +158,7 @@ export function SiteHeader() {
                       <span className="font-mono text-xs text-ink/50">
                         0{i + 1}
                       </span>
-                    </motion.a>
+                    </MotionLink>
                   </li>
                 ))}
               </ul>

@@ -17,6 +17,9 @@ import { site, stats } from "@/lib/content";
 const paragraph =
   "I'm Zephaniah, a *creative photographer* and *amateur videographer* who believes every frame should feel like something. Off camera, I *design* posters and visual identities, and most mornings start in the gym. *Fitness* keeps me disciplined. Design keeps me curious.";
 const highlightColors = ["text-lime", "text-orange", "text-pink", "text-blue"];
+// Fraction of the tracked scroll by which the last word is fully lit, so the
+// paragraph finishes around the middle of the section rather than at its end.
+const LIT_BY = 0.7;
 
 function Word({
   children,
@@ -39,7 +42,7 @@ function Word({
 
 function ScrollParagraph() {
   const ref = useRef<HTMLParagraphElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.85", "end 0.4"] });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.9", "end 0.65"] });
 
   // Split into words while tracking which highlighted phrase each word belongs to.
   const words: { text: string; highlight: number | null }[] = [];
@@ -60,12 +63,13 @@ function ScrollParagraph() {
       className="flex flex-wrap font-display text-[8.5vw] leading-[1.05] uppercase md:text-[4.6vw]"
     >
       {words.map((word, i) => {
-        const start = i / words.length;
+        const step = LIT_BY / words.length;
+        const start = i * step;
         return (
           <Word
             key={i}
             progress={scrollYProgress}
-            range={[start, start + 1 / words.length]}
+            range={[start, start + step]}
             className={word.highlight !== null ? highlightColors[word.highlight % 4] : undefined}
           >
             {word.text}

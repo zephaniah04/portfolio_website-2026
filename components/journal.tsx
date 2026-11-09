@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { MaskText, Reveal, SectionLabel } from "@/components/reveal";
 import { accentClass, journal, type JournalEntry } from "@/lib/content";
@@ -52,12 +53,22 @@ function TiltCard({ entry, index }: { entry: JournalEntry; index: number }) {
         <div className="flex flex-col gap-3 p-6" style={{ transform: "translateZ(40px)" }}>
           <h3 className="font-display text-3xl uppercase md:text-4xl">{entry.title}</h3>
           <p className="text-sm leading-relaxed text-paper/70">{entry.excerpt}</p>
-          <span
-            className={`mt-2 inline-flex items-center gap-2 font-mono text-[11px] tracking-widest uppercase ${accent.text}`}
-          >
-            Posts coming soon
-            <span className="transition-transform group-hover:translate-x-1">→</span>
-          </span>
+          {entry.href ? (
+            <Link
+              href={entry.href}
+              className={`mt-2 inline-flex items-center gap-2 font-mono text-[11px] tracking-widest uppercase ${accent.text}`}
+            >
+              {entry.cta ?? "Read more"}
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </Link>
+          ) : (
+            <span
+              className={`mt-2 inline-flex items-center gap-2 font-mono text-[11px] tracking-widest uppercase ${accent.text}`}
+            >
+              Posts coming soon
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </span>
+          )}
         </div>
         <motion.div
           aria-hidden

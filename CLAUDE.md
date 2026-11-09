@@ -37,6 +37,10 @@ Run `npm run lint` and `npm run build` before committing.
 app/
   layout.tsx          # fonts, <SmoothScroll>, custom <Cursor>
   page.tsx            # assembles the page sections in order
+  blog/page.tsx       # blog index: Notion posts grouped by topic
+  blog/[slug]/page.tsx# one post, rendered from Notion blocks
+  fitness/page.tsx    # fitness hub: gym / sports / recovery lanes
+  fitness/gym/page.tsx# the full gym plan
   globals.css         # theme tokens, grain overlay, outline text, Lenis CSS
 components/
   preloader.tsx       # 0→100% intro; exports INTRO_DELAY used by hero/header
@@ -49,11 +53,47 @@ components/
   journal.tsx         # Finance / Blog / Fitness tilt cards (menu targets)
   contact-footer.tsx  # lime footer with CTA
   reveal.tsx          # Reveal, MaskText, SectionLabel helpers
+  notion-content.tsx  # renders Notion blocks in the site's typography
+  fitness-board.tsx   # lane selector whose items sweep in from the left
   smooth-scroll.tsx, cursor.tsx
 lib/
   content.ts          # ALL site copy, links, images; edit text here
+  notion.ts           # Notion API reads for the blog
 public/images/        # hero.jpg (landscape bg), profile.jpg, work/*.jpg (placeholders; replace freely)
 ```
+
+## Blog (Notion-backed)
+
+- The header's **Blog** link goes to `/blog`, a real route — not a section anchor.
+- Posts live in the **Blog** database in Notion. `lib/notion.ts` reads it over the
+  official API using `NOTION_TOKEN` and `NOTION_BLOG_DATABASE_ID` (see `.env.example`).
+  Database properties: Name, Slug, Topic, Summary, Status, Published, Cover.
+  Only `Status = Published` rows appear on the site.
+- Reads are wrapped in `"use cache"` with `cacheLife("hours")` and the `blog` cache
+  tag, so new posts appear within the hour without a redeploy.
+- With the env vars unset, every read returns `[]` and `/blog` renders its empty
+  state, so the build never depends on Notion being reachable.
+- Each Notion topic maps to a site accent through `accentForTopic` in `lib/content.ts`.
+- Pages other than the home page render `<SiteHeader onHome={false} />` so section
+  links navigate to `/#section` instead of trying to scroll.
+
+## Fitness pages
+
+- `/fitness` is the hub the menu's **Fitness** link opens. `/fitness/gym` is the one
+  lane with a page of its own; the other lanes are panels on the hub.
+- The pages share the site's dark hero, then switch to a **bright `bg-paper` /
+  `text-ink` body** with rounded top and bottom corners. That inversion is the whole
+  theme difference — it should still read as the same site, so keep the fonts,
+  accents and mono labels exactly as they are elsewhere.
+- On a light section, borders are `border-ink/15` and secondary text is `text-ink/65`
+  (the dark-section `border-line` / `text-paper/70` are invisible there).
+- `components/fitness-board.tsx` holds the lane selector. Lane items animate in from
+  the left with Motion variants (`staggerChildren`), keyed by lane inside
+  `<AnimatePresence mode="wait">`.
+- Copy, lanes, items, principles, the weekly split and the whole gym plan live in
+  `fitness` and `gym` in `lib/content.ts`. Adding an item there is all it takes.
+- Accent classes can't be built by string interpolation (Tailwind won't see them), so
+  variants like `hover:border-lime` are written out in a lookup map.
 
 ## Design system
 

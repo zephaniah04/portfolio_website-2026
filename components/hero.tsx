@@ -218,7 +218,7 @@ export function Hero() {
               </motion.span>
             </Line>
             <Line delay={d + 0.45} className="text-paper">
-              Photographer &amp;
+              Photographer <span className="text-coral">&amp;</span>
             </Line>
             <Line delay={d + 0.55} className="text-paper">
               Filmmaker

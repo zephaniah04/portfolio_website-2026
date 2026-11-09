@@ -19,9 +19,9 @@ const WORDS = [
   "Dynamic Vision",
 ];
 
-const GRID_GAP = 30; // px between grid points at rest
-const INFLUENCE = 440; // px radius the pointer warps — a wide lens, like the reference
-const MAX_DISPLACE = 58; // px max a point is pushed outward at the centre
+const GRID_GAP = 64; // px between grid points at rest — wide cells, fewer of them
+const INFLUENCE = 500; // px radius the pointer warps — a wide lens, like the reference
+const MAX_DISPLACE = 92; // px max a point is pushed outward at the centre
 const EASE = 0.12; // how quickly points settle toward their target each frame
 const WORD_DISTANCE = 55; // px the pointer must travel before a new word can appear
 const WORD_COOLDOWN = 220; // ms minimum between words even if moving fast
